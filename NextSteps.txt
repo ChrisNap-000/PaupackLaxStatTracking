@@ -1,3 +1,6 @@
 Add button on Team Goals vs Opponent Goals by Game to toggle between goals and shots
 Fix layout of the specalist page - remove penalty mins
 Configure the default colors in streamlit to match the Paupack colors
+Add Wallenpaupack Lacrosse Logo
+Configure settings to make useable in streamlit
+Make requirements.txt better to force certain versions to be used to ensure future proof
