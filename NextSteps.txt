@@ -1,0 +1,3 @@
+Add button on Team Goals vs Opponent Goals by Game to toggle between goals and shots
+Fix layout of the specalist page - remove penalty mins
+Configure the default colors in streamlit to match the Paupack colors

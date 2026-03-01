@@ -1,2 +1,3 @@
 # PaupackLaxStatTracking
-Personal Repo for Tracking the Wallenpaupack Girls Lacrosse Teams stats - Tailored personally
+This is for tracking Women's lacrosse stats
+It is tailor made for the Wallenpaupack Girls Lacrosse program
