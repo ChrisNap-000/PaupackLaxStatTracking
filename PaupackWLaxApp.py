@@ -924,22 +924,30 @@ def page_specialist(fact, schedule, players):
 
     pen_time    = int(df_f["MinsServed"].sum())
 
-    # --- KPI DISPLAY ---
+    # --- TOP KPI ROW: 3 summary metrics (Penalty Mins removed) ---
     st.divider()
-    k1, k2, k3, k4 = st.columns(4)
+    k1, k2, k3 = st.columns(3)
     with k1: show_kpi("Save %",         save_pct)
     with k2: show_kpi("Opp Goals PG",   opp_gpg)
     with k3: show_kpi("Draw Control %", draw_pct)
-    with k4: show_kpi("Penalty Mins",   pen_time)
 
     st.divider()
 
-    left_col, right_col = st.columns([2, 1])
+    # ==========================================================================
+    # GOALIE SECTION
+    # Layout: [KPIs (Shots Faced + Saves)] | [Save % Line Chart] | [Save % Donut]
+    # ==========================================================================
+    st.subheader("Goalie")
 
-    with left_col:
+    g_kpi_col, g_line_col, g_donut_col = st.columns([1, 2, 1])
+
+    with g_kpi_col:
+        show_kpi("Shots Faced", shots_faced)
+        show_kpi("Total Saves", saves_tot)
+
+    with g_line_col:
         # SAVE % BY GAME — Area line chart, goalie rows only
         st.subheader("Save % by Game")
-
         goalie_df = df_f[df_f["Position"] == "Goalie"]
 
         if not goalie_df.empty:
@@ -951,14 +959,13 @@ def page_specialist(fact, schedule, players):
                           if r["ShotsFaced"] else 0, axis=1
             )
             sg["Label"] = (
-                sg["OpponentName"] + "\n" +
-                sg["Date"].dt.strftime("%-m/%-d")
+                sg["OpponentName"] + "<br>" +
+                sg["Date"].dt.strftime("%m-%d-%Y")
             )
             # Color each data point: red if below 50%, green if at or above 50%
             sg["MarkerColor"] = sg["SavePct"].apply(
                 lambda v: "#e74c3c" if v < 50 else "#2ecc71"
             )
-
             fig_sv = go.Figure()
             # Dashed reference line at 50% to show the "break-even" point
             fig_sv.add_hline(y=50, line_dash="dot", line_color=MUTED, opacity=0.5)
@@ -969,7 +976,7 @@ def page_specialist(fact, schedule, players):
                 fillcolor="rgba(139, 47, 201, 0.20)",
                 marker=dict(size=9, color=sg["MarkerColor"])
             ))
-            apply_layout(fig_sv, height=240,
+            apply_layout(fig_sv, height=500,
                 yaxis=dict(title="Save %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
                            tickfont=dict(color=MUTED)))
@@ -977,9 +984,39 @@ def page_specialist(fact, schedule, players):
         else:
             st.info("No goalie data for this selection.")
 
+    with g_donut_col:
+        # SAVES DONUT — Saves vs Goals Allowed
+        st.subheader("Save %")
+        goals_allowed = max(shots_faced - saves_tot, 0)
+        fig_sv_d = go.Figure(go.Pie(
+            labels=["Saves", "Goals<br>Allowed"],
+            values=[saves_tot, goals_allowed],
+            hole=0.55,
+            marker=dict(colors=[PURPLE, DARK]),
+            textinfo="label+percent",
+            textfont=dict(color=TEXT),
+        ))
+        apply_layout(fig_sv_d, height=500, showlegend=False,
+                     margin=dict(l=10, r=10, t=10, b=10))
+        st.plotly_chart(fig_sv_d, use_container_width=True, config={"displayModeBar": False})
+
+    st.divider()
+
+    # ==========================================================================
+    # DRAW CONTROL SECTION
+    # Layout: [KPIs (Draw Atts + Draw Controls)] | [Draw % Line Chart] | [Draw % Donut]
+    # ==========================================================================
+    st.subheader("Draw Control")
+
+    d_kpi_col, d_line_col, d_donut_col = st.columns([1, 2, 1])
+
+    with d_kpi_col:
+        show_kpi("Draw Atts",     draw_atts)
+        show_kpi("Draw Controls", draw_ctrl)
+
+    with d_line_col:
         # DRAW CONTROL % BY GAME — Area line chart, midfielder rows only
         st.subheader("Draw Control % by Game")
-
         mid_df = df_f[df_f["Position"] == "Midfield"]
 
         if not mid_df.empty:
@@ -990,14 +1027,13 @@ def page_specialist(fact, schedule, players):
                           if r["DrawAtts"] else 0, axis=1
             )
             dg["Label"] = (
-                dg["OpponentName"] + "\n" +
-                dg["Date"].dt.strftime("%-m/%-d")
+                dg["OpponentName"] + "<br>" +
+                dg["Date"].dt.strftime("%m-%d-%Y")
             )
             # Same red/green coloring logic as the save % chart
             dg["MarkerColor"] = dg["DrawPct"].apply(
                 lambda v: "#e74c3c" if v < 50 else "#2ecc71"
             )
-
             fig_dc = go.Figure()
             fig_dc.add_hline(y=50, line_dash="dot", line_color=MUTED, opacity=0.5)
             fig_dc.add_trace(go.Scatter(
@@ -1007,7 +1043,7 @@ def page_specialist(fact, schedule, players):
                 fillcolor="rgba(139, 47, 201, 0.20)",
                 marker=dict(size=9, color=dg["MarkerColor"])
             ))
-            apply_layout(fig_dc, height=240,
+            apply_layout(fig_dc, height=500,
                 yaxis=dict(title="Draw %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
                            tickfont=dict(color=MUTED)))
@@ -1015,41 +1051,19 @@ def page_specialist(fact, schedule, players):
         else:
             st.info("No draw data for this selection.")
 
-    with right_col:
-        # Summary totals in bordered containers
-        st.subheader("Totals")
-        with st.container(border=True):
-            show_kpi("Total Saves",   saves_tot)
-            show_kpi("Draw Atts",     draw_atts)
-            show_kpi("Draw Controls", draw_ctrl)
-
-        # SAVES DONUT — Saves vs Goals Allowed
-        st.subheader("Saves Breakdown")
-        goals_allowed = max(shots_faced - saves_tot, 0)
-        fig_sv_d = go.Figure(go.Pie(
-            labels=["Saves", "Goals Allowed"],
-            values=[saves_tot, goals_allowed],
-            hole=0.55,
-            marker=dict(colors=[PURPLE, DARK]),
-            textinfo="label+percent",
-            textfont=dict(color=TEXT),
-        ))
-        apply_layout(fig_sv_d, height=240, showlegend=False,
-                     margin=dict(l=10, r=10, t=10, b=10))
-        st.plotly_chart(fig_sv_d, use_container_width=True, config={"displayModeBar": False})
-
+    with d_donut_col:
         # DRAW CONTROLS DONUT — Won vs Lost
         st.subheader("Draw Controls")
         draws_lost = max(draw_atts - draw_ctrl, 0)
         fig_dc_d = go.Figure(go.Pie(
-            labels=["Controls Won", "Controls Lost"],
+            labels=["Controls<br>Won", "Controls<br>Lost"],
             values=[draw_ctrl, draws_lost],
             hole=0.55,
             marker=dict(colors=[PURPLE_L, DARK]),
             textinfo="label+percent",
             textfont=dict(color=TEXT),
         ))
-        apply_layout(fig_dc_d, height=240, showlegend=False,
+        apply_layout(fig_dc_d, height=500, showlegend=False,
                      margin=dict(l=10, r=10, t=10, b=10))
         st.plotly_chart(fig_dc_d, use_container_width=True, config={"displayModeBar": False})
 
