@@ -410,9 +410,11 @@ def page_team_stats(fact, schedule, players):
         # Aggregate total goals scored per game date from the fact table
         game_goals = df_f.groupby("Date")["Goals"].sum().reset_index()
 
-        # Merge in opponent name and their goal total from the schedule
+        # Merge in opponent name, their goal total, OT flag, and result from schedule.
+        # We need OT? and Won? to color the "Our Goals" markers conditionally.
         game_goals = game_goals.merge(
-            sched_f[["Date", "OpponentName", "OppGoals"]], on="Date", how="left"
+            sched_f[["Date", "OpponentName", "OppGoals", "OT?", "Won?"]],
+            on="Date", how="left"
         )
 
         # Build a readable x-axis label: "Riverside HS<br>3/8"
@@ -423,14 +425,29 @@ def page_team_stats(fact, schedule, players):
             game_goals["Date"].dt.strftime("%-m/%-d")
         )
 
+        # Determine marker color for each "Our Goals" point:
+        #   Green  — OT game we won  (came back or held on in OT)
+        #   Red    — OT game we lost
+        #   ACCENT — regular (non-OT) game, no special color needed
+        def our_goals_marker_color(row):
+            if row["OT?"] == "Y" and row["Won?"] == "Y":
+                return "#2ecc71"   # Green — OT win
+            elif row["OT?"] == "Y" and row["Won?"] == "N":
+                return "#e74c3c"   # Red — OT loss
+            else:
+                return ACCENT      # Default — non-OT game
+
+        game_goals["MarkerColor"] = game_goals.apply(our_goals_marker_color, axis=1)
+
         fig_line = go.Figure()
 
-        # Our team's goals — bright accent color
+        # Our team's goals — line stays ACCENT, markers change color per game
         fig_line.add_trace(go.Scatter(
             x=game_goals["Label"], y=game_goals["Goals"],
             mode="lines+markers", name="Our Goals",
             line=dict(color=ACCENT, width=2.5),
-            marker=dict(color=ACCENT, size=7)
+            marker=dict(color=game_goals["MarkerColor"], size=10,
+                        line=dict(color=ACCENT, width=1))
         ))
 
         # Opponent's goals — neutral color so ours stands out
@@ -583,9 +600,9 @@ def page_team_stats(fact, schedule, players):
 
         apply_layout(fig_sc, height=500,
             xaxis=dict(title="Total Assists", gridcolor="#2a2a4a",
-                       tickfont=dict(color=MUTED), range=[0, max_val]),
+                       titlefont=dict(color=MUTED), range=[0, max_val]),
             yaxis=dict(title="Total Goals",   gridcolor="#2a2a4a",
-                       tickfont=dict(color=MUTED), range=[0, max_val]),
+                       titlefont=dict(color=MUTED), range=[0, max_val]),
             legend=dict(orientation="h", y=1.08, bgcolor="rgba(0,0,0,0)",
                         font=dict(color=TEXT)))
         st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
@@ -828,7 +845,7 @@ def page_player_stats(fact, schedule, players):
 
         apply_layout(fig_pen, height=500,
             yaxis=dict(
-                title="Mins Served", gridcolor="#2a2a4a", tickfont=dict(color=MUTED),
+                title="Mins Served", gridcolor="#2a2a4a", titlefont=dict(color=MUTED),
                 rangemode="tozero",  # y axis always starts at 0
                 dtick=1,             # Force integer increments of 1
             ))
@@ -979,7 +996,7 @@ def page_specialist(fact, schedule, players):
             apply_layout(fig_sv, height=500,
                 yaxis=dict(title="Save %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
-                           tickfont=dict(color=MUTED)))
+                           titlefont=dict(color=MUTED)))
             st.plotly_chart(fig_sv, use_container_width=True, config={"displayModeBar": False})
         else:
             st.info("No goalie data for this selection.")
@@ -1046,7 +1063,7 @@ def page_specialist(fact, schedule, players):
             apply_layout(fig_dc, height=500,
                 yaxis=dict(title="Draw %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
-                           tickfont=dict(color=MUTED)))
+                           titlefont=dict(color=MUTED)))
             st.plotly_chart(fig_dc, use_container_width=True, config={"displayModeBar": False})
         else:
             st.info("No draw data for this selection.")
