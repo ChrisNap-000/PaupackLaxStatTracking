@@ -936,8 +936,8 @@ def page_specialist(fact, schedule, players):
     sched_f = schedule.copy()
 
     #Apply the date filter
-    sched_f = date_hierarchy_filter(fact, key_prefix="ts")
-    
+    sched_f = date_hierarchy_filter(schedule, key_prefix="ts")
+
     if sel_opp != "All":
         sched_f = sched_f[sched_f["OpponentName"] == sel_opp]
 
