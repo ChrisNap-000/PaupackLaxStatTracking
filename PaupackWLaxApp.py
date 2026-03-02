@@ -153,8 +153,8 @@ def get_merged(fact, players, schedule):
 # and call st.rerun() to reload the page with the new selection active.
 # -----------------------------------------------------------------------------
 # Add logo
-logo_url = "https://www.facebook.com/WallenpaupackYouthLacrosse/"
-st.image(logo_url, width=350)
+logo_url = "LaxLogo.jpg"
+st.image(logo_url, use_column_width=True)
 
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
