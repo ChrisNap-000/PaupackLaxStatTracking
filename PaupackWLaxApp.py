@@ -1002,10 +1002,6 @@ def page_specialist(fact, schedule, players):
             st.write("")
             st.write("")
             st.write("")
-            st.write("")
-            st.write("")
-            st.write("")
-            st.write("")
             show_kpi("Total Saves", saves_tot)
             st.write("")
 
