@@ -661,10 +661,11 @@ def page_player_stats(fact, schedule, players):
     # Date hierarchy: Year -> Month -> Day, each narrowing the next.
     # date_hierarchy_filter returns an already-filtered schedule DataFrame.
     st.caption("Date Filter")
-    sched_f = date_hierarchy_filter(fact, key_prefix="ts")
+    
 
     # Filter schedule, then filter fact table to matching dates
     sched_f = schedule.copy()
+    sched_f = date_hierarchy_filter(fact, key_prefix="ts")
     if sel_opp != "All":
         sched_f = sched_f[sched_f["OpponentName"] == sel_opp]
 
