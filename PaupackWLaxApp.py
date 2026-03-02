@@ -458,6 +458,20 @@ def page_team_stats(fact, schedule, players):
             marker=dict(color=TEXT, size=7)
         ))
 
+        # --- LEGEND ENTRIES FOR OT MARKER COLORS ---
+        # Plotly does not support mixed marker colors in a single trace legend,
+        # so we add two invisible dummy traces (no x/y data) whose sole purpose
+        # is to show the green and red OT indicators in the legend.
+        # mode="markers" with an empty list means nothing is drawn on the chart.
+        fig_line.add_trace(go.Scatter(
+            x=[], y=[], mode="markers", name="OT Win",
+            marker=dict(color="#2ecc71", size=10, symbol="circle")
+        ))
+        fig_line.add_trace(go.Scatter(
+            x=[], y=[], mode="markers", name="OT Loss",
+            marker=dict(color="#e74c3c", size=10, symbol="circle")
+        ))
+
         apply_layout(fig_line, height=500,
             legend=dict(orientation="h", y=1.1, bgcolor="rgba(0,0,0,0)"),
             yaxis=dict(
