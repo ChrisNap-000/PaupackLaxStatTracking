@@ -157,12 +157,15 @@ logo_url = "LaxLogo.jpg"
 
 # Center logo using columns: empty column on left and right, logo in the middle
 col1, col2, col3 = st.columns([2, 3, 2])
-with col1:
-    st.empty()  # Empty column to push the logo to the center
 with col2:
-    st.image(logo_url, width=200, )
-with col3:
-    st.empty()  # Empty column to push the logo to the center
+    st.markdown(
+        """
+        <div style="text-align: center;">
+            <img src="LaxLogo.jpg" width="200">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
