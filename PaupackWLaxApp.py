@@ -991,8 +991,12 @@ def page_specialist(fact, schedule, players):
 
     with g_kpi_col:
         with st.container(height = 500):
+            st.write("")
             show_kpi("Shots Faced", shots_faced)
+            st.write("")  # Spacer between KPIs
+            st.write("")  # Extra spacer to vertically center the two KPIs in the column
             show_kpi("Total Saves", saves_tot)
+            st.write("")  # Spacer after KPIs
 
     with g_line_col:
         # SAVE % BY GAME — Area line chart, goalie rows only
