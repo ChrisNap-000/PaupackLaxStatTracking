@@ -154,7 +154,7 @@ def get_merged(fact, players, schedule):
 # -----------------------------------------------------------------------------
 # Add logo
 logo_url = "LaxLogo.jpg"
-st.image(logo_url, use_column_width=True)
+st.image(logo_url, width = 200)
 
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
