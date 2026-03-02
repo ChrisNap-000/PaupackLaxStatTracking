@@ -928,8 +928,16 @@ def page_specialist(fact, schedule, players):
                                   ["All"] + sorted(spec_players), key="sp_player")
     sel_opp    = fcol2.selectbox("Opponent", opponents, key="sp_opp")
 
+    # Date hierarchy: Year -> Month -> Day, each narrowing the next.
+    # date_hierarchy_filter returns an already-filtered schedule DataFrame.
+    st.caption("Date Filter")
+
     # Apply filters — always restrict to specialist positions
     sched_f = schedule.copy()
+
+    #Apply the date filter
+    sched_f = date_hierarchy_filter(fact, key_prefix="ts")
+    
     if sel_opp != "All":
         sched_f = sched_f[sched_f["OpponentName"] == sel_opp]
 
