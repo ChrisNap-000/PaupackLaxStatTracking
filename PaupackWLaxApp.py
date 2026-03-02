@@ -990,8 +990,9 @@ def page_specialist(fact, schedule, players):
     g_kpi_col, g_line_col, g_donut_col = st.columns([1, 2, 1])
 
     with g_kpi_col:
-        show_kpi("Shots Faced", shots_faced, height = 300)
-        show_kpi("Total Saves", saves_tot, height = 300)
+        with st.container(height = 500):
+            show_kpi("Shots Faced", shots_faced)
+            show_kpi("Total Saves", saves_tot)
 
     with g_line_col:
         # SAVE % BY GAME — Area line chart, goalie rows only
