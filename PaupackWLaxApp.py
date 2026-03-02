@@ -20,9 +20,11 @@ import plotly.graph_objects as go
 # APP CONFIGURATION
 # Must be the very first Streamlit call in the script
 # -----------------------------------------------------------------------------
+logo_url = "https://www.facebook.com/WallenpaupackYouthLacrosse/"
+
 st.set_page_config(
     page_title="Women's Lacrosse Stats",
-    page_icon="🥍",
+    page_icon= logo_url,
     layout="wide",           # Use full browser width instead of centered column
     initial_sidebar_state="collapsed",
 )
