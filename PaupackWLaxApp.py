@@ -583,9 +583,9 @@ def page_team_stats(fact, schedule, players):
 
         apply_layout(fig_sc, height=500,
             xaxis=dict(title="Total Assists", gridcolor="#2a2a4a",
-                       titlefont=dict(color=MUTED), range=[0, max_val]),
+                       tickfont=dict(color=MUTED), range=[0, max_val]),
             yaxis=dict(title="Total Goals",   gridcolor="#2a2a4a",
-                       titlefont=dict(color=MUTED), range=[0, max_val]),
+                       tickfont=dict(color=MUTED), range=[0, max_val]),
             legend=dict(orientation="h", y=1.08, bgcolor="rgba(0,0,0,0)",
                         font=dict(color=TEXT)))
         st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
@@ -828,7 +828,7 @@ def page_player_stats(fact, schedule, players):
 
         apply_layout(fig_pen, height=500,
             yaxis=dict(
-                title="Mins Served", gridcolor="#2a2a4a", titlefont=dict(color=MUTED),
+                title="Mins Served", gridcolor="#2a2a4a", tickfont=dict(color=MUTED),
                 rangemode="tozero",  # y axis always starts at 0
                 dtick=1,             # Force integer increments of 1
             ))
@@ -972,7 +972,7 @@ def page_specialist(fact, schedule, players):
             apply_layout(fig_sv, height=240,
                 yaxis=dict(title="Save %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
-                           titlefont=dict(color=MUTED)))
+                           tickfont=dict(color=MUTED)))
             st.plotly_chart(fig_sv, use_container_width=True, config={"displayModeBar": False})
         else:
             st.info("No goalie data for this selection.")
@@ -1010,7 +1010,7 @@ def page_specialist(fact, schedule, players):
             apply_layout(fig_dc, height=240,
                 yaxis=dict(title="Draw %", range=[0, 105],
                            ticksuffix="%", gridcolor="#2a2a4a",
-                           titlefont=dict(color=MUTED)))
+                           tickfont=dict(color=MUTED)))
             st.plotly_chart(fig_dc, use_container_width=True, config={"displayModeBar": False})
         else:
             st.info("No draw data for this selection.")
