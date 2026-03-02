@@ -159,13 +159,11 @@ logo_url = "LaxLogo.jpg"
 col1, col2, col3 = st.columns([2, 3, 2])
 with col2:
     st.markdown(
-        """
-        <div style="text-align: center;">
-            <img src="LaxLogo.jpg" width="200">
-        </div>
-        """,
+        "<div style='text-align: center;'>",
         unsafe_allow_html=True
     )
+    st.image(logo_url, width=200)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
