@@ -20,11 +20,9 @@ import plotly.graph_objects as go
 # APP CONFIGURATION
 # Must be the very first Streamlit call in the script
 # -----------------------------------------------------------------------------
-logo_url = "https://www.facebook.com/WallenpaupackYouthLacrosse/"
-
 st.set_page_config(
     page_title="Women's Lacrosse Stats",
-    page_icon= logo_url,
+    page_icon="🥍",
     layout="wide",           # Use full browser width instead of centered column
     initial_sidebar_state="collapsed",
 )
@@ -154,6 +152,10 @@ def get_merged(fact, players, schedule):
 # Displays four buttons across the top. When clicked, we update session_state
 # and call st.rerun() to reload the page with the new selection active.
 # -----------------------------------------------------------------------------
+# Add logo
+logo_url = "https://www.facebook.com/WallenpaupackYouthLacrosse/"
+st.image(logo_url, width=350)
+
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
 def nav_bar():
