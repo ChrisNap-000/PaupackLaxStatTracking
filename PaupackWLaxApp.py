@@ -658,6 +658,11 @@ def page_player_stats(fact, schedule, players):
     sel_player = fcol1.selectbox("Player",   player_list, key="ps_player")
     sel_opp    = fcol2.selectbox("Opponent", opponents,   key="ps_opp")
 
+    # Date hierarchy: Year -> Month -> Day, each narrowing the next.
+    # date_hierarchy_filter returns an already-filtered schedule DataFrame.
+    st.caption("Date Filter")
+    sched_f = date_hierarchy_filter(schedule, key_prefix="ts")
+
     # Filter schedule, then filter fact table to matching dates
     sched_f = schedule.copy()
     if sel_opp != "All":
@@ -877,10 +882,10 @@ def page_player_stats(fact, schedule, players):
         ("Woman-Up Goals",   int(df_f["WomanUpGoals"].sum())),
         ("Woman-Down Goals", int(df_f["WomanDownGoals"].sum())),
         ("Games Played",     gp),
+        ("12m Penalties",    int(pen_counts.get("12m",    0))),
         ("Green Cards",      int(pen_counts.get("Green",  0))),
         ("Yellow Cards",     int(pen_counts.get("Yellow", 0))),
         ("Red Cards",        int(pen_counts.get("Red",    0))),
-        ("12m Penalties",    int(pen_counts.get("12m",    0))),
     ]
 
     # Display in two rows of 5 so the layout stays readable
