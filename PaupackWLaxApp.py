@@ -1069,8 +1069,18 @@ def page_specialist(fact, schedule, players):
     d_kpi_col, d_line_col, d_donut_col = st.columns([1, 2, 1])
 
     with d_kpi_col:
-        show_kpi("Draw Atts",     draw_atts)
-        show_kpi("Draw Controls", draw_ctrl)
+        with st.container(height = 500):
+            st.write("")
+            st.write("")
+            st.write("")
+            show_kpi("Draw Atts", draw_atts)
+            st.write("")
+            st.write("")
+            st.write("")
+            st.write("")
+            st.write("")
+            st.write("")
+            show_kpi("Draw Controls", draw_ctrl)
 
     with d_line_col:
         # DRAW CONTROL % BY GAME — Area line chart, midfielder rows only
