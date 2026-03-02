@@ -1220,6 +1220,7 @@ def page_box_stats(fact, schedule, players):
     # Convert the totals dict to a single-row DataFrame and append to the table
     totals_df = pd.DataFrame([totals])
     final_df  = pd.concat([table, totals_df], ignore_index=True)
+    final_df.dropna(axis = 0,inplace=True)
 
     # Display as an interactive Streamlit dataframe (sortable columns, scrollable)
     st.dataframe(
