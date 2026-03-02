@@ -459,27 +459,22 @@ def page_team_stats(fact, schedule, players):
         ))
 
         # --- LEGEND ENTRIES FOR OT MARKER COLORS ---
-        # Plotly does not support mixed marker colors in a single trace legend,
-        # so we add two invisible dummy traces (no x/y data) whose sole purpose
-        # is to show the green and red OT indicators in the legend.
-        # mode="markers" with an empty list means nothing is drawn on the chart.
-        fig_line.add_trace(go.Scatter(
-            x=[], y=[], mode="markers", name="OT Win",
-            marker=dict(color="#2ecc71", size=10, symbol="circle")
-        ))
-        fig_line.add_trace(go.Scatter(
-            x=[], y=[], mode="markers", name="OT Loss",
-            marker=dict(color="#e74c3c", size=10, symbol="circle")
-        ))
-
+        # We add a small caption below the chart using st.caption instead of
+        # relying on Plotly dummy traces, which are unreliable across versions.
+        # The caption clearly explains the green/red marker meaning to the user.
         apply_layout(fig_line, height=500,
             legend=dict(orientation="h", y=1.1, bgcolor="rgba(0,0,0,0)"),
             yaxis=dict(
                 gridcolor="#2a2a4a", linecolor="#2a2a4a", tickfont=dict(color=MUTED),
-                rangemode="tozero",      # y axis always starts at 0
-                dtick=1,                 # Force integer increments of 1
+                rangemode="tozero",
+                dtick=1,
             ))
         st.plotly_chart(fig_line, use_container_width=True, config={"displayModeBar": False})
+
+        # Caption explains the OT marker colors since Plotly legend entries
+        # for mixed-color markers are unreliable across versions.
+        # The colored squares are rendered using Unicode block characters.
+        st.caption("🟢 Our Goals marker = OT Win   🔴 Our Goals marker = OT Loss")
 
     st.divider()
 
