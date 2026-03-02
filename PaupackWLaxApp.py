@@ -156,14 +156,9 @@ def get_merged(fact, players, schedule):
 logo_url = "LaxLogo.jpg"
 
 # Center logo using columns: empty column on left and right, logo in the middle
-col1, col2, col3 = st.columns([2, 3, 2])
+col1, col2, col3 = st.columns([3, 1, 3])
 with col2:
-    st.markdown(
-        "<div style='text-align: center;'>",
-        unsafe_allow_html=True
-    )
     st.image(logo_url, width=200)
-    st.markdown("</div>", unsafe_allow_html=True)
 
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
