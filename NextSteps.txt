@@ -1,3 +1,0 @@
-Configure the default colors in streamlit to match the Paupack colors
-Configure settings to make useable in streamlit
-Make requirements.txt better to force certain versions to be used to ensure future proof
