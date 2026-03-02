@@ -1,6 +1,6 @@
 [theme]
-primaryColor = "#1f77b4"      # Your new button/icon color
-backgroundColor = "#FFFFFF"
+primaryColor = "#5A1A8A"      # Your new button/icon color
+backgroundColor = "#4a4949"
 secondaryBackgroundColor = "#F0F2F6"
 textColor = "#000000"
 font = "sans serif"
