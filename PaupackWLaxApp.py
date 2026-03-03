@@ -1253,7 +1253,7 @@ def page_box_stats(fact, schedule, players):
     totals_df = pd.DataFrame([totals])
     final_df  = pd.concat([table, totals_df], ignore_index=True)
     # Drop extra blank rows
-    final_df = final_df.dropna(axis = 0)
+    final_df = final_df.dropna(axis = 1, how = 'all')
 
     # Display as an interactive Streamlit dataframe (sortable columns, scrollable)
     st.dataframe(
