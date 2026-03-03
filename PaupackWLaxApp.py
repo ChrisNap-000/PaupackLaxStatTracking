@@ -1236,7 +1236,7 @@ def page_box_stats(fact, schedule, players):
 
     # --- TOTALS ROW ---
     # Build a single-row dict with summed values for all numeric columns
-    numeric_cols = ["GP", "Goals", "Assists", "Points", "GBs", "TOs", "CTOs",
+    numeric_cols = ["Goals", "Assists", "Points", "GBs", "TOs", "CTOs",
                     "Shots", "W-Up G", "W-Dn G", "Draw Atts", "Draw Ctrl",
                     "Shots Faced", "Saves"]
 
@@ -1247,13 +1247,14 @@ def page_box_stats(fact, schedule, players):
 
     totals["Player"]   = "TOTAL"
     totals["Position"] = ""
+    totals["GP"]       = table["GP"].max()       # Total games is the max GP among players, not the sum
     totals["PPG"]      = round(totals["Points"] / totals["GP"], 1) if totals["GP"] else 0
 
     # Convert the totals dict to a single-row DataFrame and append to the table
     totals_df = pd.DataFrame([totals])
     final_df  = pd.concat([table, totals_df], ignore_index=True)
     # Drop extra blank rows
-    final_df = final_df.dropna(axis = 1, how = 'all')
+    final_df = final_df.dropna(axis = 0, how = "all")
 
     # Display as an interactive Streamlit dataframe (sortable columns, scrollable)
     st.dataframe(
