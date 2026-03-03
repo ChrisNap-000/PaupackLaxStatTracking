@@ -1,1 +1,0 @@
-Opp Goals PG on specalist page should be caluclated for when a specific goalie is in net
