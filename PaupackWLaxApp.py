@@ -141,7 +141,7 @@ def get_merged(fact, players, schedule):
     df = fact.merge(players, on="PlayerID", how="left")
     df = df.merge(
         schedule[["Date", "OpponentName", "Won?"]],
-        on="Date",
+        on=["Date", "OpponentName"],
         how="left"
     )
     return df
@@ -230,6 +230,7 @@ def date_hierarchy_filter(schedule, key_prefix):
     """
     Render Year / Month / Day dropdowns and return a filtered schedule DataFrame.
     Any level left at 'All' means that level is not applied as a filter.
+    The year filter has a default value of the max year
     """
     # Extract available years from the schedule for the first dropdown
     years = ["All"] + sorted(schedule["Date"].dt.year.unique().tolist(), reverse=True)
@@ -422,7 +423,7 @@ def page_team_stats(fact, schedule, players):
         # We need OT? and Won? to color the "Our Goals" markers conditionally.
         game_goals = game_goals.merge(
             sched_f[["Date", "OpponentName", "OppGoals", "OT?", "Won?"]],
-            on="Date", how="left"
+            on=["Date", "OpponentName"], how="left"
         )
 
         # Build a readable x-axis label: "Riverside HS<br>3/8"
@@ -805,7 +806,7 @@ def page_player_stats(fact, schedule, players):
 
         # Attach opponent names to each game row for x-axis labels
         time_df = df_f.merge(
-            sched_f[["Date", "OpponentName"]], on="Date", how="left"
+            sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left"
         )
         time_df["Label"] = (
             time_df["OpponentName"] + "<br>" +
@@ -848,7 +849,7 @@ def page_player_stats(fact, schedule, players):
             # Merge OpponentName onto pen_df — df_f does not carry OpponentName
             # directly, it must be joined from sched_f using Date as the key.
             pen_df = pen_df.merge(
-                sched_f[["Date", "OpponentName"]], on="Date", how="left"
+                sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left"
             )
             pen_df["Label"] = (
                 pen_df["OpponentName"] + "<br>" +
@@ -1015,7 +1016,7 @@ def page_specialist(fact, schedule, players):
         if not goalie_df.empty:
             # Sum saves and shots faced per game date
             sg = goalie_df.groupby("Date")[["Saves", "ShotsFaced"]].sum().reset_index()
-            sg = sg.merge(sched_f[["Date", "OpponentName"]], on="Date", how="left")
+            sg = sg.merge(sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left")
             sg["SavePct"] = sg.apply(
                 lambda r: round(r["Saves"] / r["ShotsFaced"] * 100, 1)
                           if r["ShotsFaced"] else 0, axis=1
@@ -1093,7 +1094,7 @@ def page_specialist(fact, schedule, players):
 
         if not mid_df.empty:
             dg = mid_df.groupby("Date")[["DrawAtts", "DrawControls"]].sum().reset_index()
-            dg = dg.merge(sched_f[["Date", "OpponentName"]], on="Date", how="left")
+            dg = dg.merge(sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left")
             dg["DrawPct"] = dg.apply(
                 lambda r: round(r["DrawControls"] / r["DrawAtts"] * 100, 1)
                           if r["DrawAtts"] else 0, axis=1
