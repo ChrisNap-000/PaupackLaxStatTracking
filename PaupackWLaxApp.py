@@ -1205,13 +1205,13 @@ def page_box_stats(fact, schedule, players):
 
     # Format percentages as strings with "%" so they display cleanly in the table
     agg["Shot%"] = agg.apply(
-        lambda r: f"{round(r['Goals'] / r['Shots'] * 100, 1)}%" if r["Shots"] else None, axis=1
+        lambda r: f"{round(r['Goals'] / r['Shots'] * 100, 1)}%" if r["Shots"] else 0, axis=1
     )
     agg["Save%"] = agg.apply(
-        lambda r: f"{round(r['Saves'] / r['ShotsFaced'] * 100, 1)}%" if r["ShotsFaced"] else None, axis=1
+        lambda r: f"{round(r['Saves'] / r['ShotsFaced'] * 100, 1)}%" if r["ShotsFaced"] else 0, axis=1
     )
     agg["Draw%"] = agg.apply(
-        lambda r: f"{round(r['DrawControls'] / r['DrawAtts'] * 100, 1)}%" if r["DrawAtts"] else None, axis=1
+        lambda r: f"{round(r['DrawControls'] / r['DrawAtts'] * 100, 1)}%" if r["DrawAtts"] else 0, axis=1
     )
 
     # Define column order for display
