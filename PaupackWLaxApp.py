@@ -818,7 +818,7 @@ def page_player_stats(fact, schedule, players):
 
         # Attach opponent names to each game row for x-axis labels
         time_df = df_f.merge(
-            sched_f[["Date", "OpponentName"]], on="Date", how="left"
+            sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left"
         )
         time_df["Label"] = (
             time_df["OpponentName"] + "<br>" +
