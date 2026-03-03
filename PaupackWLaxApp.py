@@ -18,7 +18,6 @@ import plotly.graph_objects as go
 
 # -----------------------------------------------------------------------------
 # APP CONFIGURATION
-# Must be the very first Streamlit call in the script
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Women's Lacrosse Stats",
@@ -62,6 +61,7 @@ BASE_LAYOUT = dict(
     yaxis=dict(gridcolor="#2a2a4a", linecolor="#2a2a4a", tickfont=dict(color=MUTED)),
 )
 
+# Create function to quickly apply this layout to any figure with optional overrides for specific charts
 def apply_layout(fig, **kwargs):
     """
     Apply our standard dark theme layout to any Plotly figure.
@@ -81,7 +81,7 @@ def apply_layout(fig, **kwargs):
 
 # -----------------------------------------------------------------------------
 # SESSION STATE INITIALIZATION
-# Streamlit re-runs the entire script on every interaction, so we use
+# Prevents entire script rerunning with every interaction
 # st.session_state (a dictionary that persists across reruns) to remember
 # which page the user is on and whether data has been loaded.
 # -----------------------------------------------------------------------------
@@ -105,9 +105,11 @@ def load_data(fact_bytes, schedule_bytes, players_bytes):
     We convert the Date columns to proper datetime objects so we can
     filter and sort by date correctly.
     """
-    fact     = pd.read_excel(fact_bytes)
-    schedule = pd.read_excel(schedule_bytes)
-    players  = pd.read_excel(players_bytes)
+
+    # Only read the specific sheet so Coaches can created other sheets if needed
+    fact     = pd.read_excel(fact_bytes, sheet_name = "FactTable")
+    schedule = pd.read_excel(schedule_bytes, sheet_name = "DimSchedule")
+    players  = pd.read_excel(players_bytes, sheet_name = "DimPlayers")
 
     # Convert date strings like "2025-03-08" into actual datetime objects
     fact["Date"]     = pd.to_datetime(fact["Date"])
@@ -117,8 +119,7 @@ def load_data(fact_bytes, schedule_bytes, players_bytes):
     # select_dtypes(include="number") returns only columns with numeric data
     # types (int, float). We fill nulls with 0 on all three tables so that
     # .sum() and other aggregations never return NaN due to missing entries.
-    # Text columns like PlayerName and PenType are left untouched — replacing
-    # their nulls with 0 would corrupt the data and break filters.
+    # Text columns like PlayerName and PenType are left untouched
     fact[fact.select_dtypes(include="number").columns]         = fact.select_dtypes(include="number").fillna(0)
     schedule[schedule.select_dtypes(include="number").columns] = schedule.select_dtypes(include="number").fillna(0)
     players[players.select_dtypes(include="number").columns]   = players.select_dtypes(include="number").fillna(0)
@@ -137,11 +138,15 @@ def get_merged(fact, players, schedule):
     with DimSchedule (to get opponent name and win/loss).
     We use a left join so every row in the fact table is kept even if
     there's no matching row in the other tables.
+    Only merge those three columns because we do not want team stats to repeats at the player LOD
     """
+    # Merge fact with players on PlayerID
     df = fact.merge(players, on="PlayerID", how="left")
+
+    # Merge new table with schedule on Date and Opponent name incase two games are played in a day
     df = df.merge(
         schedule[["Date", "OpponentName", "Won?"]],
-        on="Date",
+        on=["Date", "OpponentName"],
         how="left"
     )
     return df
