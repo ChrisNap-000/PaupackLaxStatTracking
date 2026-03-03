@@ -1243,6 +1243,7 @@ def page_box_stats(fact, schedule, players):
         "DrawAtts":       "Draw Atts",
         "DrawControls":   "Draw Ctrl",
         "ShotsFaced":     "Shots Faced",
+        "MinsServed":        "Pen Mins",
     }
     table = agg[display_cols].rename(columns=rename_map).sort_values("Points", ascending=False)
 
@@ -1250,7 +1251,7 @@ def page_box_stats(fact, schedule, players):
     # Build a single-row dict with summed values for all numeric columns
     numeric_cols = ["Goals", "Assists", "Points", "GBs", "TOs", "CTOs",
                     "Shots", "W-Up G", "W-Dn G", "Draw Atts", "Draw Ctrl",
-                    "Shots Faced", "Saves"]
+                    "Shots Faced", "Saves", "Pen Mins"]
 
     totals = {col: "" for col in table.columns}   # Start with empty strings
     for col in numeric_cols:
