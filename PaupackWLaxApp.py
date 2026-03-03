@@ -151,11 +151,9 @@ def get_merged(fact, players, schedule):
     )
     return df
 
-
 # -----------------------------------------------------------------------------
-# NAVIGATION BAR
-# Displays four buttons across the top. When clicked, we update session_state
-# and call st.rerun() to reload the page with the new selection active.
+# Add Paupack Lax logos to every page
+# Logo is stored in Repo, so can be referenced directly
 # -----------------------------------------------------------------------------
 # Add logo
 logo_url = "LaxLogo.jpg"
@@ -165,8 +163,16 @@ col1, col2, col3 = st.columns([3.5, 1, 3.5])
 with col2:
     st.image(logo_url, width=200)
 
+# -----------------------------------------------------------------------------
+# NAVIGATION BAR
+# Displays four buttons across the top. When clicked, we update session_state
+# and call st.rerun() to reload the page with the new selection active.
+# Acts as tabs to switch views
+# -----------------------------------------------------------------------------
+# Tab names
 PAGES = ["Team Stats", "Player Stats", "Specialist", "Box Stats"]
 
+# Render the navigation bar and handle page switching
 def nav_bar():
     """Render the top navigation buttons."""
     cols = st.columns(len(PAGES))
@@ -711,6 +717,7 @@ def page_player_stats(fact, schedule, players):
 
     # Player card (jersey + position) sits in its own column alongside the KPIs
     pc, k1, k2, k3, k4, k5 = st.columns([1, 1.2, 1.2, 1.2, 1.2, 1.2])
+    st.table(df)
 
     with pc:
         # st.container(border=True) draws a simple outlined box — no HTML needed
