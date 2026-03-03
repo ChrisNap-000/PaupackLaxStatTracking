@@ -1211,6 +1211,18 @@ def page_box_stats(fact, schedule, players):
         MinsServed     = ("MinsServed",     "sum"),
     ).reset_index()
 
+    # --- PENALTY TYPE COUNTS (done separately since .agg() doesn't support conditional counts) ---
+    for pen in ["12m", "Green", "Yellow", "Red"]:
+        agg[pen] = (
+            df_f[df_f["PenType"] == pen]
+            .groupby("PlayerName")["PenType"]
+            .count()
+            .reindex(agg["PlayerName"])
+            .fillna(0)
+            .astype(int)
+            .values
+        )
+
     # Calculated columns — derived from the aggregated totals above
     agg["Points"] = agg["Goals"] + agg["Assists"]
     agg["PPG"]    = (agg["Points"] / agg["GP"]).round(1)
@@ -1232,7 +1244,7 @@ def page_box_stats(fact, schedule, players):
         "GBs", "TOs", "CTOs", "Shots", "Shot%",
         "WomanUpGoals", "WomanDownGoals",
         "DrawAtts", "DrawControls", "Draw%",
-        "ShotsFaced", "Saves", "Save%", "MinsServed"
+        "ShotsFaced", "Saves", "Save%", "MinsServed", "12m", "Green", "Yellow", "Red"
     ]
 
     # Rename to shorter display-friendly column headers
@@ -1251,7 +1263,7 @@ def page_box_stats(fact, schedule, players):
     # Build a single-row dict with summed values for all numeric columns
     numeric_cols = ["Goals", "Assists", "Points", "GBs", "TOs", "CTOs",
                     "Shots", "W-Up G", "W-Dn G", "Draw Atts", "Draw Ctrl",
-                    "Shots Faced", "Saves", "Pen Mins"]
+                    "Shots Faced", "Saves", "Pen Mins", "12m", "Green", "Yellow", "Red"]
 
     totals = {col: "" for col in table.columns}   # Start with empty strings
     for col in numeric_cols:
