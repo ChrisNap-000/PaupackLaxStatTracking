@@ -1251,6 +1251,7 @@ def page_box_stats(fact, schedule, players):
     totals["GP"]       = table["GP"].max()       # Total games is the max GP among players, not the sum
     totals["PPG"]      = round(totals["Points"] / totals["GP"], 1) if totals["GP"] else 0
     totals["Shot%"]    = f"{round(totals['Goals'] / totals['Shots'] * 100, 1)}%" if totals["Shots"] else "0%"
+    totals["Draw%"]    = f"{round(totals['Draw Ctrl'] / totals['Draw Atts'] * 100, 1)}%" if totals["Draw Atts"] else "0%"
     totals["Save%"]    = f"{round(totals['Saves'] / totals['Shots Faced'] * 100, 1)}%" if totals["Shots Faced"] else "0%"
 
     # Convert the totals dict to a single-row DataFrame and append to the table
