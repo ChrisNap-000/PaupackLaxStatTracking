@@ -717,7 +717,6 @@ def page_player_stats(fact, schedule, players):
 
     # Player card (jersey + position) sits in its own column alongside the KPIs
     pc, k1, k2, k3, k4, k5 = st.columns([1, 1.2, 1.2, 1.2, 1.2, 1.2])
-    st.table(df)
 
     with pc:
         # st.container(border=True) draws a simple outlined box — no HTML needed
