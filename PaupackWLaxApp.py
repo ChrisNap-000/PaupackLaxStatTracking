@@ -1232,7 +1232,7 @@ def page_box_stats(fact, schedule, players):
         "GBs", "TOs", "CTOs", "Shots", "Shot%",
         "WomanUpGoals", "WomanDownGoals",
         "DrawAtts", "DrawControls", "Draw%",
-        "ShotsFaced", "Saves", "Save%"
+        "ShotsFaced", "Saves", "Save%", "MinsServed"
     ]
 
     # Rename to shorter display-friendly column headers
