@@ -968,7 +968,7 @@ def page_specialist(fact, schedule, players):
     shots_faced = int(df_f["ShotsFaced"].sum())
     save_pct    = f"{round(saves_tot / shots_faced * 100, 1)}%" if shots_faced else "N/A"
 
-    opp_goals   = sched_f["OppGoals"].sum()
+    opp_goals   = df_f["ShotsFaced"].sum() - df_f["Saves"].sum()  # Opponent goals = shots faced - saves
     opp_gpg     = round(opp_goals / games_played, 1) if games_played else 0
 
     draw_atts   = int(df_f["DrawAtts"].sum())
