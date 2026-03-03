@@ -236,7 +236,7 @@ def date_hierarchy_filter(schedule, key_prefix):
     col1, col2, col3 = st.columns(3)
 
     # --- YEAR DROPDOWN ---
-    sel_year = col1.selectbox("Year", years, key=f"{key_prefix}_year")
+    sel_year = col1.selectbox("Year", years, index = 1, key=f"{key_prefix}_year")
 
     # Narrow the schedule to the selected year before building month options.
     # This ensures Month only shows months that actually exist in that year.
@@ -247,7 +247,7 @@ def date_hierarchy_filter(schedule, key_prefix):
     # --- MONTH DROPDOWN ---
     # Use month number for filtering but display the full month name for readability.
     # We build a dict {month_number: "Month Name"} from the filtered schedule.
-    month_nums   = sorted(sched_y["Date"].dt.month.unique().tolist())
+    month_nums   = sorted(sched_y["Date"].dt.month.unique().tolist(), reverse=True)
     month_labels = {m: pd.Timestamp(2000, m, 1).strftime("%B") for m in month_nums}
     month_options = ["All"] + [month_labels[m] for m in month_nums]
 
