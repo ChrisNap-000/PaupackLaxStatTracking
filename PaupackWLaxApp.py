@@ -146,7 +146,7 @@ def get_merged(fact, players, schedule):
     # Merge new table with schedule on Date and Opponent name incase two games are played in a day
     df = df.merge(
         schedule[["Date", "OpponentName", "Won?"]],
-        on=["Date", "OpponentName"],
+        on="Date",
         how="left"
     )
     return df
@@ -817,7 +817,7 @@ def page_player_stats(fact, schedule, players):
 
         # Attach opponent names to each game row for x-axis labels
         time_df = df_f.merge(
-            sched_f[["Date", "OpponentName"]], on=["Date", "OpponentName"], how="left"
+            sched_f[["Date", "OpponentName"]], on="Date", how="left"
         )
         time_df["Label"] = (
             time_df["OpponentName"] + "<br>" +
