@@ -482,7 +482,7 @@ def page_team_stats(fact, schedule, players):
         # Caption explains the OT marker colors since Plotly legend entries
         # for mixed-color markers are unreliable across versions.
         # The colored squares are rendered using Unicode block characters.
-        st.caption("🟢 Our Goals marker = OT Win   🔴 Our Goals marker = OT Loss")
+        st.caption("🟢 = OT Win   🔴 = OT Loss")
 
     st.divider()
 
@@ -781,23 +781,27 @@ def page_player_stats(fact, schedule, players):
         apply_layout(fig_ptg, height=500, margin=dict(l=20, r=20, t=10, b=10))
         st.plotly_chart(fig_ptg, use_container_width=True, config={"displayModeBar": False})
 
+    # ----------------------------------
+    # ----STATS OVER TIME LINE CHART----
+    # ----------------------------------
     with right_col:
-        # STAT OVER TIME LINE CHART
         # Three buttons let the user switch between Goals, Assists, and Points.
         # We store the current selection in session_state so it persists on rerun.
         st.subheader("Stats Over Time")
 
+        # Default value is points in the line chart
         if "ps_line_mode" not in st.session_state:
-            st.session_state.ps_line_mode = "Goals"
+            st.session_state.ps_line_mode = "Points"
 
         # Render three side-by-side buttons — highlight the active one as primary
         btn1, btn2, btn3 = st.columns(3)
-        if btn1.button("Goals",   key="ps_line_goals",   type="primary" if st.session_state.ps_line_mode == "Goals"   else "secondary", use_container_width=True):
-            st.session_state.ps_line_mode = "Goals";   st.rerun()
-        if btn2.button("Assists", key="ps_line_assists", type="primary" if st.session_state.ps_line_mode == "Assists" else "secondary", use_container_width=True):
-            st.session_state.ps_line_mode = "Assists"; st.rerun()
-        if btn3.button("Points",  key="ps_line_points",  type="primary" if st.session_state.ps_line_mode == "Points"  else "secondary", use_container_width=True):
+        if btn1.button("Points",  key="ps_line_points",  type="primary" if st.session_state.ps_line_mode == "Points"  else "secondary", use_container_width=True):
             st.session_state.ps_line_mode = "Points";  st.rerun()
+        if btn2.button("Goals",   key="ps_line_goals",   type="primary" if st.session_state.ps_line_mode == "Goals"   else "secondary", use_container_width=True):
+            st.session_state.ps_line_mode = "Goals";   st.rerun()
+        if btn3.button("Assists", key="ps_line_assists", type="primary" if st.session_state.ps_line_mode == "Assists" else "secondary", use_container_width=True):
+            st.session_state.ps_line_mode = "Assists"; st.rerun()
+
 
         # Attach opponent names to each game row for x-axis labels
         time_df = df_f.merge(
@@ -828,7 +832,7 @@ def page_player_stats(fact, schedule, players):
             yaxis=dict(
                 gridcolor="#2a2a4a", linecolor="#2a2a4a", tickfont=dict(color=MUTED),
                 rangemode="tozero",  # y axis always starts at 0
-                dtick=1,             # Force integer increments of 1
+                tickvals=list(range(1, 9)), # y axis has a tick of 1 and a max of 8 (since it's unlikely a single player will have more than 8 points in one game)
             ))
         st.plotly_chart(fig_time, use_container_width=True, config={"displayModeBar": False})
 
@@ -1201,13 +1205,13 @@ def page_box_stats(fact, schedule, players):
 
     # Format percentages as strings with "%" so they display cleanly in the table
     agg["Shot%"] = agg.apply(
-        lambda r: f"{round(r['Goals'] / r['Shots'] * 100, 1)}%" if r["Shots"] else "—", axis=1
+        lambda r: f"{round(r['Goals'] / r['Shots'] * 100, 1)}%" if r["Shots"] else None, axis=1
     )
     agg["Save%"] = agg.apply(
-        lambda r: f"{round(r['Saves'] / r['ShotsFaced'] * 100, 1)}%" if r["ShotsFaced"] else "—", axis=1
+        lambda r: f"{round(r['Saves'] / r['ShotsFaced'] * 100, 1)}%" if r["ShotsFaced"] else None, axis=1
     )
     agg["Draw%"] = agg.apply(
-        lambda r: f"{round(r['DrawControls'] / r['DrawAtts'] * 100, 1)}%" if r["DrawAtts"] else "—", axis=1
+        lambda r: f"{round(r['DrawControls'] / r['DrawAtts'] * 100, 1)}%" if r["DrawAtts"] else None, axis=1
     )
 
     # Define column order for display
@@ -1248,6 +1252,7 @@ def page_box_stats(fact, schedule, players):
     # Convert the totals dict to a single-row DataFrame and append to the table
     totals_df = pd.DataFrame([totals])
     final_df  = pd.concat([table, totals_df], ignore_index=True)
+    # Drop extra blank rows
     final_df = final_df.dropna(axis = 0)
 
     # Display as an interactive Streamlit dataframe (sortable columns, scrollable)
