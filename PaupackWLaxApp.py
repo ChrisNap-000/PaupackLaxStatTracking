@@ -1191,7 +1191,6 @@ def page_box_stats(fact, schedule, players):
         df_f = df_f[df_f["PlayerName"].str.contains(sel_name, case=False, na=False)]
 
     st.divider()
-    st.table(df_f)
     # --- AGGREGATION ---
     # Group by player and sum all numeric stats across all filtered games.
     # "nunique" on Date gives us games played (counts distinct game dates).
@@ -1209,6 +1208,7 @@ def page_box_stats(fact, schedule, players):
         WomanDownGoals = ("WomanDownGoals", "sum"),
         ShotsFaced     = ("ShotsFaced",     "sum"),
         Saves          = ("Saves",          "sum"),
+        MinsServed     = ("MinsServed",     "sum"),
     ).reset_index()
 
     # Calculated columns — derived from the aggregated totals above
