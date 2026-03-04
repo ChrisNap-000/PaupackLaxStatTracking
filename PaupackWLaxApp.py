@@ -155,7 +155,7 @@ def get_merged(fact, players, schedule):
 # Add Paupack Lax logos to every page
 # Logo is stored in Repo, so can be referenced directly
 # -----------------------------------------------------------------------------
-# Add logo
+# Contain logo in variable
 logo_url = "LaxLogo.jpg"
 
 # Center logo using columns: empty column on left and right, logo in the middle
@@ -367,7 +367,9 @@ def page_team_stats(fact, schedule, players):
 
     games_played = len(sched_f)
 
-    # --- KPI CALCULATIONS ---
+    # ----------------------------------
+    # ---------KPI Calculations---------
+    # ----------------------------------
     # Guard against division by zero with "if games_played else 0"
     total_goals   = df_f["Goals"].sum()
     total_assists = df_f["Assists"].sum()
@@ -402,7 +404,9 @@ def page_team_stats(fact, schedule, players):
     st.divider()
 
     # --- ROW 2: W/L Donut + Team Goals Line Chart ---
-    # W/L donut moved here (was in row 3), gauge moved to row 3
+    # ----------------------------------
+    # ----------Win/Loss Donut----------
+    # ----------------------------------
     left_col, right_col = st.columns([1, 2])
 
     with left_col:
@@ -424,6 +428,9 @@ def page_team_stats(fact, schedule, players):
                      margin=dict(l=10, r=10, t=10, b=10))
         st.plotly_chart(fig_wl, use_container_width=True, config={"displayModeBar": False})
 
+    # ----------------------------------
+    # ----Goals OVER TIME LINE CHART----
+    # ----------------------------------
     with right_col:
         st.subheader("Team Goals vs Opponent Goals by Game")
 
@@ -503,6 +510,9 @@ def page_team_stats(fact, schedule, players):
     # Woman-Up % and Woman-Down % on the same gauge visual.
     col_a, col_b, col_c = st.columns([1, 2, 2])
 
+    # ---------------------------------
+    # -------Woman-Up/Down Gauge-------
+    # ---------------------------------
     with col_a:
         # Toggle button: clicking it flips between Woman-Up and Woman-Down mode.
         # We store the current mode in session_state so it persists across reruns.
@@ -550,6 +560,9 @@ def page_team_stats(fact, schedule, players):
         apply_layout(fig_gauge, height=500, margin=dict(l=20, r=20, t=10, b=10))
         st.plotly_chart(fig_gauge, use_container_width=True, config={"displayModeBar": False})
 
+    # -----------------------------------
+    # ---G vs A by Player Scatter Plot---
+    # -----------------------------------
     with col_b:
         st.subheader("Goals vs Assists by Player")
 
@@ -589,8 +602,8 @@ def page_team_stats(fact, schedule, players):
             x=line_x + line_x[::-1],
             y=line_y + [0] * len(line_x),
             fill="toself",
-            fillcolor="rgba(0, 200, 150, 0.15)",    # Teal — assist-heavy zone
-            line=dict(color="rgba(0, 200, 150, 0.8)", width=0.5),
+            fillcolor="rgba(255, 255, 255, 0.15)",    # Teal — assist-heavy zone
+            line=dict(color="rgba(255, 255, 255, 0.8)", width=0.5),
             showlegend=True,
             name="More Assists",
             hoverinfo="skip",
