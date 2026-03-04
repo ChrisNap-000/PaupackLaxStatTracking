@@ -597,12 +597,12 @@ def page_team_stats(fact, schedule, players):
         ))
 
         # --- SHADING: below the line (more assists than goals) ---
-        # Different color (teal/green) so the two zones are clearly distinct
+        # Different color (White) so the two zones are clearly distinct
         fig_sc.add_trace(go.Scatter(
             x=line_x + line_x[::-1],
             y=line_y + [0] * len(line_x),
             fill="toself",
-            fillcolor="rgba(255, 255, 255, 0.15)",    # Teal — assist-heavy zone
+            fillcolor="rgba(255, 255, 255, 0.15)",    # White — assist-heavy zone
             line=dict(color="rgba(255, 255, 255, 0.8)", width=0.5),
             showlegend=True,
             name="More Assists",
@@ -649,6 +649,9 @@ def page_team_stats(fact, schedule, players):
                         font=dict(color=TEXT)))
         st.plotly_chart(fig_sc, use_container_width=True, config={"displayModeBar": False})
 
+    # ---------------------------------
+    # -----Top 5 Players by Points-----
+    # ---------------------------------
     with col_c:
         st.subheader("Top 5 Players by Points")
 
@@ -717,7 +720,9 @@ def page_player_stats(fact, schedule, players):
     jersey = player_info["JerseyNum"]
     pos    = player_info["Position"]
 
-    # --- KPI CALCULATIONS ---
+    # ----------------------------------
+    # ---------KPI Calculations---------
+    # ----------------------------------
     gp      = len(df_f)                         # Games played = number of rows for this player
     goals   = int(df_f["Goals"].sum())
     assists = int(df_f["Assists"].sum())
@@ -748,6 +753,9 @@ def page_player_stats(fact, schedule, players):
     # --- ROW 2: Charts side by side ---
     left_col, right_col = st.columns(2)
 
+    # ----------------------------------
+    # ------Shooting % Donut Chart------
+    # ----------------------------------
     with left_col:
         # SHOOTING % DONUT — legend removed, labels on slices are sufficient
         st.subheader("Shooting %")
