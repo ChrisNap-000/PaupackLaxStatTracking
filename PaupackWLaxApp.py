@@ -392,14 +392,18 @@ def page_team_stats(fact, schedule, players):
     opp_goals    = sched_f["OppGoals"].sum()
     opp_goals_pg = round(opp_goals / games_played, 1) if games_played else 0
 
+    # % of team goals that were assists
+    per_assisted = f"{round(total_assists / total_goals * 100, 1)}%" if total_goals else "N/A"
+
     # --- KPI DISPLAY ---
     st.divider()
-    k1, k2, k3, k4, k5 = st.columns(5)
+    k1, k2, k3, k4, k5, k6 = st.columns(6)
     with k1: show_kpi("Goals PG",       goals_pg)
     with k2: show_kpi("Assists PG",     assists_pg)
     with k3: show_kpi("Clearing %",     clearing_pct)
     with k4: show_kpi("Riding %",       riding_pct)
     with k5: show_kpi("Opp Goals PG",   opp_goals_pg)
+    with k6: show_kpi("% of Goals Assisted",     per_assisted)
 
     st.divider()
 
