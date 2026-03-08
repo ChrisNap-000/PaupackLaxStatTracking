@@ -873,7 +873,9 @@ def page_player_stats(fact, schedule, players):
             ))
         st.plotly_chart(fig_time, use_container_width=True, config={"displayModeBar": False})
 
-        # PENALTIES OVER TIME
+    # ---------------------------------
+    # ------Pen Minutes Over Time------
+    # ---------------------------------
         st.subheader("Penalty Minutes Over Time")
 
         # Only include rows where a penalty was recorded (non-null PenType)
@@ -917,7 +919,9 @@ def page_player_stats(fact, schedule, players):
 
     st.divider()
 
-    # --- ADDITIONAL STATS ROW ---
+    # ----------------------------------
+    # -------Additional Stats KPI-------
+    # ----------------------------------
     st.subheader("Additional Stats")
 
     # Count penalties by card type — value_counts() tallies each unique PenType.
@@ -999,7 +1003,9 @@ def page_specialist(fact, schedule, players):
 
     games_played = len(sched_f)
 
-    # --- KPI CALCULATIONS ---
+    # --------------------------------
+    # --------KPI Calculations--------
+    # --------------------------------
     saves_tot   = int(df_f["Saves"].sum())
     shots_faced = int(df_f["ShotsFaced"].sum())
     save_pct    = f"{round(saves_tot / shots_faced * 100, 1)}%" if shots_faced else "N/A"
@@ -1030,6 +1036,9 @@ def page_specialist(fact, schedule, players):
 
     g_kpi_col, g_line_col, g_donut_col = st.columns([1, 2, 1])
 
+    # ---------------------------------
+    # -----------Goalie KPIs-----------
+    # ---------------------------------
     with g_kpi_col:
         with st.container(height = 500):
             st.write("")
@@ -1044,6 +1053,9 @@ def page_specialist(fact, schedule, players):
             st.write("")
             show_kpi("Total Saves", saves_tot)
 
+    # --------------------------------
+    # ---------Save % by Game---------
+    # --------------------------------
     with g_line_col:
         # SAVE % BY GAME — Area line chart, goalie rows only
         st.subheader("Save % by Game")
@@ -1083,6 +1095,9 @@ def page_specialist(fact, schedule, players):
         else:
             st.info("No goalie data for this selection.")
 
+    # --------------------------------
+    # -------Save % Donut Chart-------
+    # --------------------------------
     with g_donut_col:
         # SAVES DONUT — Saves vs Goals Allowed
         st.subheader("Save %")
@@ -1109,6 +1124,9 @@ def page_specialist(fact, schedule, players):
 
     d_kpi_col, d_line_col, d_donut_col = st.columns([1, 2, 1])
 
+    # --------------------------------
+    # ----------Faceoff KPIs----------
+    # --------------------------------
     with d_kpi_col:
         with st.container(height = 500):
             st.write("")
@@ -1123,6 +1141,9 @@ def page_specialist(fact, schedule, players):
             st.write("")
             show_kpi("Draw Controls", draw_ctrl)
 
+    # ------------------------------------
+    # -------Draw Control % by Game-------
+    # ------------------------------------
     with d_line_col:
         # DRAW CONTROL % BY GAME — Area line chart, midfielder rows only
         st.subheader("Draw Control % by Game")
@@ -1160,6 +1181,9 @@ def page_specialist(fact, schedule, players):
         else:
             st.info("No draw data for this selection.")
 
+    # ---------------------------------
+    # -------Draw Controls Donut-------
+    # ---------------------------------
     with d_donut_col:
         # DRAW CONTROLS DONUT — Won vs Lost
         st.subheader("Draw Controls")
@@ -1216,7 +1240,9 @@ def page_box_stats(fact, schedule, players):
         df_f = df_f[df_f["PlayerName"].str.contains(sel_name, case=False, na=False)]
 
     st.divider()
-    # --- AGGREGATION ---
+    # ---------------------------------
+    # ------------Box Stats------------
+    # ---------------------------------
     # Group by player and sum all numeric stats across all filtered games.
     # "nunique" on Date gives us games played (counts distinct game dates).
     agg = df_f.groupby(["PlayerName", "Position"]).agg(
