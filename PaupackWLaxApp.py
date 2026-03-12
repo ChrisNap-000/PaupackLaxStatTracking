@@ -12,6 +12,7 @@
 # which keeps player data private.
 # =============================================================================
 
+import re
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -99,33 +100,34 @@ if "data_loaded" not in st.session_state:
 # This makes the app faster.
 # -----------------------------------------------------------------------------
 @st.cache_data
-def load_data(fact_bytes, schedule_bytes, players_bytes):
+def load_data(main_sheet_url, schedule_url):
     """
-    Read the three uploaded Excel files into pandas DataFrames.
-    We convert the Date columns to proper datetime objects so we can
-    filter and sort by date correctly.
+    Loads data from two Google Sheets files.
+    - main_sheet_url: contains FactTable (gid=0) and DimPlayers (gid=495914705) as separate tabs
+    - schedule_url: contains DimSchedule
     """
 
-    # Only read the specific sheet so Coaches can created other sheets if needed
-    fact     = pd.read_excel(fact_bytes, sheet_name = "FactTable")
-    schedule = pd.read_excel(schedule_bytes, sheet_name = "DimSchedule")
-    players  = pd.read_excel(players_bytes, sheet_name = "DimPlayers")
+    def get_csv_url(url, gid):
+        match = re.search(r"/spreadsheets/d/([a-zA-Z0-9-_]+)", url)
+        if not match:
+            raise ValueError("Invalid Google Sheets URL")
+        sheet_id = match.group(1)
+        return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
 
-    # Convert date strings like "2025-03-08" into actual datetime objects
+    fact     = pd.read_csv(get_csv_url(main_sheet_url, gid="0"))
+    players  = pd.read_csv(get_csv_url(main_sheet_url, gid="495914705"))
+    schedule = pd.read_csv(get_csv_url(schedule_url, gid="0"))
+
+    # Convert date strings to datetime objects
     fact["Date"]     = pd.to_datetime(fact["Date"])
     schedule["Date"] = pd.to_datetime(schedule["Date"])
 
-    # --- NULL REPLACEMENT ---
-    # select_dtypes(include="number") returns only columns with numeric data
-    # types (int, float). We fill nulls with 0 on all three tables so that
-    # .sum() and other aggregations never return NaN due to missing entries.
-    # Text columns like PlayerName and PenType are left untouched
-    fact[fact.select_dtypes(include="number").columns]         = fact.select_dtypes(include="number").fillna(0)
-    schedule[schedule.select_dtypes(include="number").columns] = schedule.select_dtypes(include="number").fillna(0)
-    players[players.select_dtypes(include="number").columns]   = players.select_dtypes(include="number").fillna(0)
+    # Fill numeric nulls with 0
+    for df in [fact, schedule, players]:
+        num_cols = df.select_dtypes(include="number").columns
+        df[num_cols] = df[num_cols].fillna(0)
 
     return fact, schedule, players
-
 
 # -----------------------------------------------------------------------------
 # MERGE HELPER
@@ -294,45 +296,41 @@ def date_hierarchy_filter(schedule, key_prefix):
 # =============================================================================
 def upload_screen():
     """
-    Show a file upload UI for all three required Excel files.
-    Once all three are uploaded and the button is clicked, we load the data
+    Show a URL input UI for the two required Google Sheets.
+    Once both are provided and the button is clicked, we load the data
     into session_state and set data_loaded = True, which triggers a rerun
     that takes the user to the main app.
     """
     st.title("🥍 Women's Lacrosse Analytics")
-    st.write("Upload your three data files to get started. No data is stored — everything stays in your browser session.")
+    st.write("Paste your Google Sheets links to get started. No data is stored — everything stays in your browser session.")
     st.divider()
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("FactTable")
-        st.caption("One row per player per game")
-        fact_file = st.file_uploader("FactTable", type=["xlsx", "csv"],
-                                     label_visibility="collapsed", key="up_fact")
+        st.subheader("FactTable/DimPlayers")
+        st.caption("Contains FactTable and DimPlayers Tabs")
+        main_url = st.text_input("FactTable/DimPlayers URL", placeholder="https://docs.google.com/spreadsheets/d/...",
+                                  label_visibility="collapsed", key="up_main")
     with col2:
         st.subheader("DimSchedule")
         st.caption("One row per game (team-level data)")
-        sched_file = st.file_uploader("DimSchedule", type=["xlsx", "csv"],
+        schedule_url = st.text_input("Schedule Sheet URL", placeholder="https://docs.google.com/spreadsheets/d/...",
                                       label_visibility="collapsed", key="up_sched")
-    with col3:
-        st.subheader("DimPlayers")
-        st.caption("Roster — one row per player")
-        player_file = st.file_uploader("DimPlayers", type=["xlsx", "csv"],
-                                       label_visibility="collapsed", key="up_players")
 
-    # Only show the Load button once all three files have been selected
-    if fact_file and sched_file and player_file:
+    if main_url and schedule_url:
         if st.button("Load Report", use_container_width=True, type="primary"):
-            # Read files and store DataFrames directly in session_state
-            fact, schedule, players = load_data(fact_file, sched_file, player_file)
-            st.session_state.fact     = fact
-            st.session_state.schedule = schedule
-            st.session_state.players  = players
-            st.session_state.data_loaded = True
-            st.rerun()  # Reload the script — now data_loaded is True
+            try:
+                fact, schedule, players = load_data(main_url, schedule_url)
+                st.session_state.fact        = fact
+                st.session_state.schedule    = schedule
+                st.session_state.players     = players
+                st.session_state.data_loaded = True
+                st.rerun()
+            except Exception as e:
+                st.error(f"Could not load sheets. Make sure both links are shared as 'Anyone with the link can view'.\n\nError: {e}")
     else:
-        st.info("Upload all three files above, then click Load Report.")
+        st.info("Paste both Google Sheets links above, then click Load Report.")
 
 
 # =============================================================================
