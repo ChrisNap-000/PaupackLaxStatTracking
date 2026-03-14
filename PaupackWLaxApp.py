@@ -114,9 +114,18 @@ def load_data(main_sheet_url, schedule_url):
         sheet_id = match.group(1)
         return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
 
-    fact     = pd.read_csv(get_csv_url(main_sheet_url, gid="0"))
-    players  = pd.read_csv(get_csv_url(main_sheet_url, gid="495914705"))
-    schedule = pd.read_csv(get_csv_url(schedule_url, gid="0"))
+    def try_gids(url, gid_list):
+        for gid in gid_list:
+            try:
+                df = pd.read_csv(get_csv_url(url, gid=gid))
+                return df
+            except Exception:
+                continue
+        raise ValueError(f"Failed to load sheet from {url} with GIDs: {gid_list}")
+
+    fact     = try_gids(main_sheet_url, ["274125524", "0"]) # Order is real table first then test data
+    players  = try_gids(main_sheet_url, ["219834076", "495914705"]) # Order is real table first then test data
+    schedule = try_gids(schedule_url,   ["650061436", "0"]) # Order is real table first then test data
 
     # Convert date strings to datetime objects
     fact["Date"]     = pd.to_datetime(fact["Date"])
