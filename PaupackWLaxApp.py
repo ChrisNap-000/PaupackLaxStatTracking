@@ -306,14 +306,15 @@ def upload_screen():
     st.divider()
 
     col1, col2 = st.columns(2)
-
     with col1:
         st.subheader("FactTable/DimPlayers")
+        st.link_button("Open Player Data Google Forms", "https://forms.gle/hQebcVn8HzaGjT7t8", new_tab=True)
         st.caption("Contains FactTable and DimPlayers Tabs")
         main_url = st.text_input("FactTable/DimPlayers URL", placeholder="https://docs.google.com/spreadsheets/d/...",
                                   label_visibility="collapsed", key="up_main")
     with col2:
         st.subheader("DimSchedule")
+        st.link_button("Open Team Data Google Forms", "https://forms.gle/tEqR6mPwtQ5q5Wir8", new_tab=True)
         st.caption("One row per game (team-level data)")
         schedule_url = st.text_input("Schedule Sheet URL", placeholder="https://docs.google.com/spreadsheets/d/...",
                                       label_visibility="collapsed", key="up_sched")
